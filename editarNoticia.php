@@ -1,3 +1,8 @@
+<?php 
+session_start();
+$_SESSION["id"]=$_GET["id"];
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,48 +16,61 @@
 </head>
 
 <body>
-<form method="post" action="editarNoticias.php">
+<form method="post" action="">
         <fieldset>
             <p>
                 <label> Nuevo Titular de la Noticia
-                <input type="text" id= "titular"name="titular" required />
+                <input type="text" id= "ntitular"name="ntitular" required/>
             </label>
             </p>
             <p>
                 <label> Nuevo Contenido de la Noticia:
-                    <textarea id="contenido" name="contenido" rows="10" cols="70"></textarea>
+                    <textarea id="ncontenido" name="ncontenido" rows="10" cols="70" required></textarea>
             </label>
             </p>
-            <p><input type="submit" value="Crear"></p>
+            <p>
+                <label> Noticia privada:
+                <input type="checkbox" id= "nprivacidad"name="nprivacidad"/>
+            </label>
+            </p>
+            <p><input type="submit" name="submit" value="Editar"></p>
 
         </fieldset>
 
     </form>
 
 <?php 
+$servidor = "localhost";
+$baseDatos = "clubsocial";
+$usuario = "root";
+$pass = "root";
+
+
+
+if(isset($_POST["submit"])){
+   
 editarNoticia();
-function editarNoticia(){
-    $ntitular= $_POST["titular"];
-    $ncontenido=$_POST["contenido"];
-  
-        $con = new PDO("mysql:host=" . $GLOBALS['servidor'] . ";dbname=" . $GLOBALS['baseDatos'], $GLOBALS['usuario'], $GLOBALS['pass']);
-       
-
-     $query = $con->prepare("UPDATE noticias  set titular=$ntitular , content=$ncontenido, where id=id;");
-     $query->execute();
-     
-        
+}
+function editarNoticia(){   
+    $id=$_SESSION['id'];
+    $ntitular= $_POST["ntitular"];
+    $ncontenido=$_POST["ncontenido"];
+    if (isset($_POST['nprivacidad'])){
+        $nprivacidad="0";
+        }else{
+            $nprivacidad="1";
+        }
     
+    $con = new PDO("mysql:host=" . $GLOBALS['servidor'] . ";dbname=" . $GLOBALS['baseDatos'], $GLOBALS['usuario'], $GLOBALS['pass']);
+    $sql = $con->prepare("UPDATE noticias  set titular=:titular , content=:content, privado=:privado where id_noticia=:id;");
+    $sql->bindParam(":titular", $ntitular);
+    $sql->bindParam(":content", $ncontenido);
+    $sql->bindParam(":privado", $nprivacidad);
+    $sql->bindParam(":id", $id);
+    $sql->execute();   
+
+    header(("Location: ../insertarNoticias.php"));
 } 
-
 ?>
-
-
-
-
-
- 
-
 </body>
-
 </html>

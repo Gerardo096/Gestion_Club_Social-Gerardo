@@ -22,7 +22,7 @@
         $con = new PDO("mysql:host=" . $GLOBALS['servidor'] . ";dbname=" . $GLOBALS['baseDatos'], $GLOBALS['usuario'], $GLOBALS['pass']);
        
 
-     $query = $con->prepare("SELECT * FROM noticias");
+     $query = $con->prepare("SELECT * FROM noticias WHERE privado =1;");
      $query->execute();
      $data = $query->fetchAll();
         

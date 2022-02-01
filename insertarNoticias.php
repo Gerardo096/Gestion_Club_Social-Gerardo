@@ -20,6 +20,11 @@
                     <textarea id="contenido" name="contenido" rows="10" cols="70"></textarea>
             </label>
             </p>
+            <p>
+                <label> Noticia privada:
+                <input type="checkbox" id= "privacidad"name="privacidad"/>
+            </label>
+            </p>
             <p><input type="submit" value="Crear"></p>
 
         </fieldset>
@@ -45,13 +50,20 @@ function insertarNoticia()
 $titular= $_POST["titular"];
 $contenido=$_POST["contenido"];
 $fecha=date("d-m-Y H:i");
+if (isset($_POST['privacidad'])){
+    $privacidad="0";
+    }else{
+        $privacidad="1";
+    }
+
     
     try {
         $con = new PDO("mysql:host=" . $GLOBALS['servidor'] . ";dbname=" . $GLOBALS['baseDatos'], $GLOBALS['usuario'], $GLOBALS['pass']);
-        $sql = $con->prepare("INSERT into noticias values(null,:titular,:content,:fecha)");
+        $sql = $con->prepare("INSERT into noticias values(null,:titular,:content,:fecha,:privacidad)");
         $sql->bindParam(":titular", $titular);
         $sql->bindParam(":content", $contenido);
         $sql->bindParam(":fecha", $fecha);
+        $sql->bindParam(":privacidad", $privacidad);
         $sql->execute();
         
         
